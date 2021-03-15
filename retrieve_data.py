@@ -2,11 +2,12 @@
 """
 import numpy as np
 import pandas as pd
-from functools import cache
+
 import pandas_datareader as pdr
 
+from cache import simple_cache
 
-@cache
+@simple_cache
 def get_data(tickers=('sp500'), data_source='fred', start_date=None, end_date=None):
     """ Get stock data
 
@@ -22,22 +23,19 @@ def get_data(tickers=('sp500'), data_source='fred', start_date=None, end_date=No
 
     """
     data = pdr.DataReader(tickers, data_source, start_date, end_date)
-
     return data
 
 
-def include_all_weekdays(data, start_date=None, end_date=None):
+def include_all_weekdays(df, start_date=None, end_date=None):
     if not start_date:
-        start_date = min(df.Date)
+        start_date = df.index.min()
     if not end_date:
-        end_date = max(df.Date)
-    df.set_index('Date', inplace=True)
-    close = pd.DataFrame(df['Close'])
+        end_date = df.index.max()
     all_weekdays = pd.date_range(start=start_date, end=end_date, freq='B')
-    data = close.reindex(all_weekdays)
+    data = data.reindex(all_weekdays)
     return data
 
-def process_data():
+def fetch_and_process_data(start_date=None, end_date=None):
     """ Process stock data
 
     tickers: List
@@ -50,6 +48,7 @@ def process_data():
         End date for dataset
 
     """
-    data = get_data()
-    data = include_all_weekdays(data, start_date, end_date)
+    data = get_data(tickers=('sp500'), data_source='fred')
+    data = include_all_weekdays(data)
     return data
+

@@ -1,5 +1,5 @@
 """
-- Check that cache_dir exists, if not create it
+- Check that CACHE_DIR exists, if not create it
 - Map function and arguments to a filename
 - See if file already exists
 - If so, read in pickle
@@ -8,6 +8,7 @@
 import os
 import pickle
 
+CACHE_DIR = 'data'
 
 def check_dir_exists(path):
     if not os.path.isdir(path):
@@ -16,23 +17,26 @@ def check_dir_exists(path):
         raise Exception('Was unable to create directory {}'.format(path))
 
 def simple_cache(func):
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
 
-        # Check that cache_dir exists, if not create it
-        cache_dir = 'data'
-        check_dir_exists(cache_dir)
+        # Check that CACHE_DIR exists, if not create it
+        check_dir_exists(CACHE_DIR)
 
         # Map func and its arguments to a filename
-        filename = '_'.join([func.__name__] + [str(i) for i in args]) + '.pkl'
-        filename = os.path.join(cache_dir, filename)
+        filename = '_'.join([func.__name__] + [str(i) for i in args] 
+                            + [str(i) for i in list(kwargs.values())]) + '.pkl'
+        filename = os.path.join(CACHE_DIR, filename)
+        print(filename)
 
         # If pickle already exists, read it in
         if os.path.exists(filename):
+            print('cache exists, loading pickle')
             with open(filename, 'rb') as F:
                 res = pickle.load(F)
 
         # Else run func and pickle its output
         else:
+            print('no cache exists, fetching data')
             res = func(*args)
 
             with open(filename, 'wb') as F:
