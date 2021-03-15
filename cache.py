@@ -37,7 +37,7 @@ def simple_cache(func):
         # Else run func and pickle its output
         else:
             print('no cache exists, fetching data')
-            res = func(*args)
+            res = func(*args, **kwargs)
 
             with open(filename, 'wb') as F:
                 pickle.dump(res, F)
