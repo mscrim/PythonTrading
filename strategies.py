@@ -1,4 +1,5 @@
 from datetime import timedelta
+import matplotlib.pyplot as plt
 
 from strategy import TradingStrategy
 
@@ -25,11 +26,12 @@ def check_weekday(start_date):
 
 class buy_and_hold(TradingStrategy):
 
-    def __init__(self, start_date, end_date):
+    def __init__(self, data, start_date, end_date):
+        self.data = data
         self.start_date = check_weekday(start_date)
         self.end_date = end_date
 
-    def returns(d):
+    def returns(self):
         """
         Inputs
         ----------
@@ -45,7 +47,8 @@ class buy_and_hold(TradingStrategy):
         returns : pd.Series
             Return vs date
         """
-        init_price = d.loc[self.start_date][0]
+        d = self.data
+        init_price = d.loc[self.start_date]
         returns = d / init_price
         return returns
 
@@ -76,12 +79,6 @@ class buy_and_hold(TradingStrategy):
         perc_change = (final_price - init_price) / init_price * 100.
         return factor, perc_change
 
-if __name__ == "__main__":
-    import retrieve_data as rd
-    data = rd.fetch_and_process_data()
-    print(data.head())
-    print(type(data))
 
-#(d, start_date, end_date):
 
     
