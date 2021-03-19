@@ -32,8 +32,8 @@ def include_all_weekdays(df, start_date=None, end_date=None):
     if not end_date:
         end_date = df.index.max()
     all_weekdays = pd.date_range(start=start_date, end=end_date, freq='B')
-    data = data.reindex(all_weekdays)
-    return data
+    df = df.reindex(all_weekdays)
+    return df
 
 def fetch_and_process_data(start_date=None, end_date=None):
     """ Process stock data
@@ -50,5 +50,9 @@ def fetch_and_process_data(start_date=None, end_date=None):
     """
     data = get_data(tickers=('sp500'), data_source='fred')
     data = include_all_weekdays(data)
+
+    # Covert data to series
+    data = data['sp500']
+    data.freq = None
     return data
 
