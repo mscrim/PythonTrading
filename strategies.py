@@ -1,9 +1,17 @@
 from datetime import timedelta
 
 def check_weekday(start_date):
-    """ Check that start_date is a weekday
+    """ 
+    Check that start_date is a weekday. If not, set it to the
+    following Monday.
 
-    start_date: pd.Timestamp
+    Inputs
+    ----------
+    start_date : pd.Timestamp
+
+    Returns
+    -------
+    start_date : pd.Timestamp
 
     """
     weekday_no = start_date.weekday()
